@@ -1,0 +1,242 @@
+model:
+  provider: openai-api
+  default: gpt-6.1-sol
+  base_url: https://api.openai.com/v1
+  api_mode: codex_responses
+fallback_providers: []
+max_concurrent_sessions: 1
+max_live_sessions: 1
+timezone: America/Sao_Paulo
+
+agent:
+  max_turns: 20
+  run_budget_seconds: 240
+  coding_context: "off"
+  reasoning_effort: medium
+  disabled_toolsets:
+    - web
+    - search
+    - x_search
+    - video
+    - image_gen
+    - video_gen
+    - computer_use
+    - terminal
+    - browser
+    - cronjob
+    - file
+    - tts
+    - context_engine
+    - connections
+    - project
+    - desktop_ui
+    - onboarding
+    - catalog
+    - code_execution
+    - kanban
+    - discord
+    - discord_admin
+    - feishu_doc
+    - feishu_drive
+    - bot_room
+
+platform_toolsets:
+  cli:
+    - media
+    - observability
+    - memory
+    - session_search
+    - skills
+    - todo
+    - clarify
+    - delegation
+    - vision
+  whatsapp:
+    - media
+    - observability
+    - memory
+    - session_search
+    - skills
+    - todo
+    - clarify
+    - delegation
+    - vision
+  api_server: []
+  acp: []
+  cron: []
+
+plugins:
+  enabled:
+    - advanced-delegation
+  disabled: []
+  auto_update_check_hours: 0
+  auto_apply: false
+  isolation: in_process
+
+security:
+  redact_secrets: true
+  allow_lazy_installs: false
+
+tools:
+  tool_search:
+    enabled: "on"
+    listing: auto
+    listing_max_tokens: 4000
+    search_default_limit: 5
+    max_search_limit: 10
+    defer:
+      - session_search
+  connectors:
+    enabled: false
+
+memory:
+  memory_enabled: true
+  user_profile_enabled: true
+  provider: ""
+  memory_char_limit: 3200
+  user_char_limit: 1800
+  write_approval: false
+  nudge_interval: 10
+
+skills:
+  external_dirs: []
+  project_discovery: false
+  auto_load:
+    - media-management
+  inline_shell: false
+  creation_nudge_interval: 15
+  write_approval: false
+
+curator:
+  enabled: false
+
+auxiliary:
+  background_review:
+    enabled: true
+    provider: openai-api
+    model: gpt-6-luna
+    max_input_tokens: 48000
+    extra_tools: []
+    base_url: https://api.openai.com/v1
+  title_generation:
+    model_upgrade_enabled: false
+    provider: openai-api
+    model: gpt-6-luna
+    base_url: https://api.openai.com/v1
+    api_mode: codex_responses
+  compression:
+    provider: openai-api
+    model: gpt-6-luna
+    reasoning_effort: low
+    base_url: https://api.openai.com/v1
+    api_mode: codex_responses
+  review:
+    provider: openai-api
+    model: gpt-6.1-sol
+    api_mode: codex_responses
+    base_url: https://api.openai.com/v1
+  vision:
+    provider: openai-api
+    model: gpt-6.1-terra
+    reasoning_effort: low
+    base_url: https://api.openai.com/v1
+    api_mode: codex_responses
+  voice_chat:
+    provider: openai-api
+    model: gpt-6-luna
+    base_url: https://api.openai.com/v1
+    api_mode: codex_responses
+
+dashboard:
+  public_url: https://hermes.greis.dev.br
+  trusted_proxies:
+    - 10.42.0.0/16
+    - 172.28.64.100
+  session_token_auth:
+    enabled: false
+
+mcp_servers:
+  media:
+    enabled: true
+    url: http://arr-mcp.spoke-mediaserver.svc.cluster.local:6060/mcp
+    strict_redirect_headers: true
+    headers:
+      Authorization: Bearer ${ARR_MCP_HERMES_TOKEN}
+    sampling:
+      enabled: false
+    elicitation:
+      enabled: false
+    tools:
+      prompts: false
+      resources: false
+  observability:
+    enabled: true
+    url: http://prometheus-mcp.platform-observability.svc.cluster.local:8080/mcp
+    strict_redirect_headers: true
+    sampling:
+      enabled: false
+    elicitation:
+      enabled: false
+    tools:
+      prompts: false
+      resources: false
+
+delegation:
+  backend: model_map
+  max_concurrent_children: 1
+  max_spawn_depth: 1
+  orchestrator_enabled: false
+  max_iterations: 12
+  auto_resume: false
+  fallback_providers: []
+  backends:
+    model_map:
+      default: rotina
+      options:
+        - name: rotina
+          description: Consultas delimitadas, contagens e resumos; somente leitura.
+          provider: openai-api
+          base_url: https://api.openai.com/v1
+          api_mode: codex_responses
+          model: gpt-6-luna
+          reasoning_effort: low
+          fallback_providers: []
+        - name: diagnostico
+          description: Diagnóstico difícil e análise de impacto; somente leitura.
+          provider: openai-api
+          base_url: https://api.openai.com/v1
+          api_mode: codex_responses
+          model: gpt-6.1-sol
+          reasoning_effort: high
+          fallback_providers: []
+        - name: visual
+          description: Interpretação de imagens enviadas pelo usuário; somente leitura.
+          provider: openai-api
+          base_url: https://api.openai.com/v1
+          api_mode: codex_responses
+          model: gpt-6.1-terra
+          reasoning_effort: medium
+          fallback_providers: []
+
+compression:
+  enabled: true
+  threshold_tokens: 48000
+
+stt:
+  enabled: true
+  provider: openai
+  language: pt
+  openai:
+    model: gpt-transcribe
+    base_url: https://api.openai.com/v1
+    timeout: 60
+    max_retries: 0
+  prompt: "HomeServer: Hermes, Jellyfin, qBittorrent, Radarr, Sonarr, Prowlarr, Bazarr, Seerr."
+
+display:
+  platforms:
+    whatsapp:
+      tool_progress: all
+      interim_assistant_messages: true
+      show_reasoning: true
+      busy_ack_detail: false

@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hermes-agent
+  namespace: spoke-hermes
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: hermes-agent
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: hermes-agent
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: hermes
+          image: nousresearch/hermes-agent:v0.23.2@sha256:d6746a084e9341baada483e3d6210444d3c1aeb7c130f0915150065fb2851459
+          env:
+            - name: TZ
+              value: America/Sao_Paulo
+            - name: HERMES_HOME
+              value: /home/hermes/.hermes
+            - name: HERMES_TUI_TOOLSETS
+              value: media,observability,memory,session_search,skills,todo,clarify,delegation,vision
+          envFrom:
+            - secretRef:
+                name: hermes-secrets
+                optional: true
+          ports:
+            - name: web
+              containerPort: 9119
+          resources:
+            requests:
+              cpu: 100m
+              memory: 384Mi
+            limits:
+              memory: 1536Mi
+          livenessProbe:
+            tcpSocket:
+              port: 9119
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          readinessProbe:
+            tcpSocket:
+              port: 9119
+            initialDelaySeconds: 15
+            periodSeconds: 15
+          volumeMounts:
+            - name: state
+              mountPath: /home/hermes/.hermes
+            - name: profile
+              mountPath: /home/hermes/.hermes/config.yaml
+              subPath: config.yaml
+              readOnly: true
+            - name: profile
+              mountPath: /home/hermes/.hermes/profile.yaml
+              subPath: profile.yaml
+              readOnly: true
+            - name: profile
+              mountPath: /home/hermes/.hermes/SOUL.md
+              subPath: SOUL.md
+              readOnly: true
+            - name: profile
+              mountPath: /home/hermes/.hermes/AGENTS.md
+              subPath: AGENTS.md
+              readOnly: true
+            - name: profile
+              mountPath: /home/hermes/.hermes/skills/media-management/SKILL.md
+              subPath: media-management.md
+              readOnly: true
+            - name: profile
+              mountPath: /home/hermes/.hermes/skills/homelab-observability/SKILL.md
+              subPath: homelab-observability.md
+              readOnly: true
+      volumes:
+        - name: state
+          persistentVolumeClaim:
+            claimName: hermes-data
+        - name: profile
+          configMap:
+            name: hermes-profile
