@@ -16,6 +16,26 @@ spec:
         app.kubernetes.io/name: hermes-agent
     spec:
       restartPolicy: Always
+      initContainers:
+        - name: cleanup-legacy-skills
+          image: busybox:1.37.0
+          command:
+            - sh
+            - -ec
+            - |
+              rm -rf /opt/data/skills/media-diagnosis \
+                     /opt/data/skills/media-operations \
+                     /opt/data/skills/media-qbit-inventory \
+                     /opt/data/.skills_prompt_snapshot.json
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              memory: 128Mi
+          volumeMounts:
+            - name: state
+              mountPath: /opt/data
       containers:
         - name: hermes
           image: nousresearch/hermes-agent:v0.23.2@sha256:d6746a084e9341baada483e3d6210444d3c1aeb7c130f0915150065fb2851459
@@ -47,9 +67,16 @@ spec:
                   name: hermes-secrets
                   key: ROOT_PASSWORD
                   optional: true
+            - name: WHATSAPP_ENABLED
+              value: "true"
+            - name: WHATSAPP_MODE
+              value: "bot"
           envFrom:
             - secretRef:
                 name: hermes-secrets
+                optional: true
+            - secretRef:
+                name: hermes-whatsapp
                 optional: true
           ports:
             - name: web
