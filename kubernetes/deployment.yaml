@@ -17,8 +17,8 @@ spec:
     spec:
       restartPolicy: Always
       initContainers:
-        - name: cleanup-legacy-skills
-          image: busybox:1.37.0
+        - name: prepare-hermes-state
+          image: &hermesImage nousresearch/hermes-agent:v0.23.2@sha256:d6746a084e9341baada483e3d6210444d3c1aeb7c130f0915150065fb2851459
           command:
             - sh
             - -ec
@@ -27,6 +27,22 @@ spec:
                      /opt/data/skills/media-operations \
                      /opt/data/skills/media-qbit-inventory \
                      /opt/data/.skills_prompt_snapshot.json
+              /opt/hermes/.venv/bin/python - <<'PY'
+              from pathlib import Path
+              import hermes_yaml as yaml
+              from utils.files import atomic_yaml_write
+
+              target = Path("/opt/data/config.yaml")
+              if target.is_symlink():
+                  raise SystemExit(f"Refusing to overwrite symlink: {target}")
+              profile = yaml.safe_load(Path("/run/hermes-profile/config.yaml").read_text())
+              previous = (yaml.safe_load(target.read_text()) or {}) if target.exists() else {}
+              home = previous.get("platforms", {}).get("whatsapp", {}).get("home_channel")
+              if home:
+                  profile.setdefault("platforms", {}).setdefault("whatsapp", {}).setdefault("home_channel", home)
+              atomic_yaml_write(target, profile)
+              PY
+              chown hermes:hermes /opt/data/config.yaml
           resources:
             requests:
               cpu: 50m
@@ -36,9 +52,13 @@ spec:
           volumeMounts:
             - name: state
               mountPath: /opt/data
+            - name: profile
+              mountPath: /run/hermes-profile/config.yaml
+              subPath: config.yaml
+              readOnly: true
       containers:
         - name: hermes
-          image: nousresearch/hermes-agent:v0.23.2@sha256:d6746a084e9341baada483e3d6210444d3c1aeb7c130f0915150065fb2851459
+          image: *hermesImage
           args: ["sleep", "infinity"]
           env:
             - name: TZ
@@ -100,10 +120,6 @@ spec:
           volumeMounts:
             - name: state
               mountPath: /opt/data
-            - name: profile
-              mountPath: /opt/data/config.yaml
-              subPath: config.yaml
-              readOnly: true
             - name: profile
               mountPath: /opt/data/profile.yaml
               subPath: profile.yaml
