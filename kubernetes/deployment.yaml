@@ -19,13 +19,34 @@ spec:
       containers:
         - name: hermes
           image: nousresearch/hermes-agent:v0.23.2@sha256:d6746a084e9341baada483e3d6210444d3c1aeb7c130f0915150065fb2851459
+          args: ["sleep", "infinity"]
           env:
             - name: TZ
               value: America/Sao_Paulo
             - name: HERMES_HOME
-              value: /home/hermes/.hermes
+              value: /opt/data
+            - name: HERMES_WRITE_SAFE_ROOT
+              value: /opt/data
             - name: HERMES_TUI_TOOLSETS
               value: media,observability,memory,session_search,skills,todo,clarify,delegation,vision
+            - name: HERMES_DASHBOARD
+              value: "true"
+            - name: HERMES_DASHBOARD_HOST
+              value: "0.0.0.0"
+            - name: HERMES_DASHBOARD_PORT
+              value: "9119"
+            - name: HERMES_DASHBOARD_BASIC_AUTH_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: hermes-secrets
+                  key: ROOT_USERNAME
+                  optional: true
+            - name: HERMES_DASHBOARD_BASIC_AUTH_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: hermes-secrets
+                  key: ROOT_PASSWORD
+                  optional: true
           envFrom:
             - secretRef:
                 name: hermes-secrets
@@ -51,29 +72,29 @@ spec:
             periodSeconds: 15
           volumeMounts:
             - name: state
-              mountPath: /home/hermes/.hermes
+              mountPath: /opt/data
             - name: profile
-              mountPath: /home/hermes/.hermes/config.yaml
+              mountPath: /opt/data/config.yaml
               subPath: config.yaml
               readOnly: true
             - name: profile
-              mountPath: /home/hermes/.hermes/profile.yaml
+              mountPath: /opt/data/profile.yaml
               subPath: profile.yaml
               readOnly: true
             - name: profile
-              mountPath: /home/hermes/.hermes/SOUL.md
+              mountPath: /opt/data/SOUL.md
               subPath: SOUL.md
               readOnly: true
             - name: profile
-              mountPath: /home/hermes/.hermes/AGENTS.md
+              mountPath: /opt/data/AGENTS.md
               subPath: AGENTS.md
               readOnly: true
             - name: profile
-              mountPath: /home/hermes/.hermes/skills/media-management/SKILL.md
+              mountPath: /opt/data/skills/media-management/SKILL.md
               subPath: media-management.md
               readOnly: true
             - name: profile
-              mountPath: /home/hermes/.hermes/skills/homelab-observability/SKILL.md
+              mountPath: /opt/data/skills/homelab-observability/SKILL.md
               subPath: homelab-observability.md
               readOnly: true
       volumes:
