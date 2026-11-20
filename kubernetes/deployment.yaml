@@ -27,6 +27,9 @@ spec:
                      /opt/data/skills/media-operations \
                      /opt/data/skills/media-qbit-inventory \
                      /opt/data/.skills_prompt_snapshot.json
+              if [ -f /opt/data/.env ] && [ ! -L /opt/data/.env ]; then
+                sed -i '/^API_SERVER_KEY=/d; /^API_SERVER_HOST=/d; /^API_SERVER_PORT=/d' /opt/data/.env
+              fi
               /opt/hermes/.venv/bin/python - <<'PY'
               from pathlib import Path
               import hermes_yaml as yaml
@@ -91,6 +94,8 @@ spec:
               value: "true"
             - name: WHATSAPP_MODE
               value: "bot"
+            - name: HERMES_GATEWAY_BOOTSTRAP_STATE
+              value: "running"
             - name: API_SERVER_HOST
               value: "0.0.0.0"
             - name: API_SERVER_PORT
@@ -104,7 +109,6 @@ spec:
                 optional: true
             - secretRef:
                 name: hermes-api
-                optional: true
           ports:
             - name: web
               containerPort: 9119
