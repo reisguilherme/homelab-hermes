@@ -10,3 +10,6 @@ spec:
     - name: web
       port: 9119
       targetPort: 9119
+    - name: api
+      port: 8642
+      targetPort: 8642

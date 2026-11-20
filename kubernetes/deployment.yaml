@@ -91,6 +91,10 @@ spec:
               value: "true"
             - name: WHATSAPP_MODE
               value: "bot"
+            - name: API_SERVER_HOST
+              value: "0.0.0.0"
+            - name: API_SERVER_PORT
+              value: "8642"
           envFrom:
             - secretRef:
                 name: hermes-secrets
@@ -98,9 +102,14 @@ spec:
             - secretRef:
                 name: hermes-whatsapp
                 optional: true
+            - secretRef:
+                name: hermes-api
+                optional: true
           ports:
             - name: web
               containerPort: 9119
+            - name: api
+              containerPort: 8642
           resources:
             requests:
               cpu: 100m

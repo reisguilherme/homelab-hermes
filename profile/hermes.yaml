@@ -4,8 +4,8 @@ model:
   base_url: https://api.openai.com/v1
   api_mode: codex_responses
 fallback_providers: []
-max_concurrent_sessions: 1
-max_live_sessions: 1
+max_concurrent_sessions: 2
+max_live_sessions: 2
 timezone: America/Sao_Paulo
 
 agent:
@@ -61,7 +61,16 @@ platform_toolsets:
     - clarify
     - delegation
     - vision
-  api_server: []
+  api_server:
+    - media
+    - observability
+    - memory
+    - session_search
+    - skills
+    - todo
+    - clarify
+    - delegation
+    - vision
   acp: []
   cron: []
 
