@@ -4,7 +4,15 @@ metadata:
   name: spoke-hermes
   labels:
     app.kubernetes.io/part-of: spoke-hermes
+    homelab.greis.dev.br/spoke: "true"
+    homelab.greis.dev.br/domain: ai
     pod-security.kubernetes.io/enforce: baseline
+  annotations:
+    homeship.greis.dev.br/title: Hermes
+    homeship.greis.dev.br/icon: orbit
+    homeship.greis.dev.br/accent: orange
+    homeship.greis.dev.br/capabilities: copilot
+    homeship.greis.dev.br/loki-chip: HERMES
 ---
 apiVersion: v1
 kind: ResourceQuota
