@@ -1,6 +1,6 @@
 model:
   provider: openai-api
-  default: gpt-6.1-sol
+  default: gpt-6.2-sol
   base_url: https://api.openai.com/v1
   api_mode: codex_responses
 fallback_providers: []
@@ -141,7 +141,7 @@ auxiliary:
     api_mode: codex_responses
   review:
     provider: openai-api
-    model: gpt-6.1-sol
+    model: gpt-6.2-sol
     api_mode: codex_responses
     base_url: https://api.openai.com/v1
   vision:
@@ -215,7 +215,7 @@ delegation:
           provider: openai-api
           base_url: https://api.openai.com/v1
           api_mode: codex_responses
-          model: gpt-6.1-sol
+          model: gpt-6.2-sol
           reasoning_effort: high
           fallback_providers: []
         - name: visual

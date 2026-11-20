@@ -7,7 +7,7 @@ data:
   config.yaml: |
     model:
       provider: openai-api
-      default: gpt-6.1-sol
+      default: gpt-6.2-sol
       base_url: https://api.openai.com/v1
       api_mode: codex_responses
     fallback_providers: []
