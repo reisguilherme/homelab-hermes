@@ -1,6 +1,6 @@
 # homelab-hermes (Spoke 2)
 
-Assistente pessoal multi-spoke do **HomeServer** baseado em **Hermes Agent v0.23.3** (Web UI + WhatsApp + API interna `:8642`), implantado no namespace `spoke-hermes` via **K3s + FluxCD + SOPS/Age**.
+Assistente pessoal multi-spoke do **HomeServer** baseado em **Hermes Agent v0.23.3** (modelo primário `gpt-6.2-sol`, Web UI `:9119`, WhatsApp e API interna `:8642` consumida pelo `spoke-dashboard`), implantado no namespace `spoke-hermes` via **K3s + FluxCD + SOPS/Age**.
 
 ## Integrações MCP Configuradas
 
