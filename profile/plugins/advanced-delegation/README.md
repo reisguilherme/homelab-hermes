@@ -1,6 +1,6 @@
 # Advanced Delegation for Hermes Agent
 
-> Part of the [Hermes Official Plugins](../README.md), Nous Research's official plugins for Hermes Agent.
+> Part of the [Hermes Official Plugins](https://github.com/NousResearch/hermes-official-plugins), Nous Research's official plugins for Hermes Agent.
 
 Official [Hermes Agent](https://github.com/NousResearch/hermes-agent) plugin that adds two
 **delegation modes** to `delegate_task`, next to the built-in default:
