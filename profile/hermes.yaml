@@ -113,7 +113,7 @@ skills:
   auto_load:
     - media-management
   inline_shell: false
-  creation_nudge_interval: 15
+  creation_nudge_interval: 0
   write_approval: false
 
 curator:
